@@ -50,8 +50,8 @@ Tecnologías
 Frontend:
 
 ```bash
-frontend
-npm start
+cd .\frontend\
+ng serve
 ```
 > Corre en http://localhost:4200
 
