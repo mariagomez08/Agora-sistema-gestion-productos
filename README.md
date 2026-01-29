@@ -47,17 +47,16 @@ Tecnologías
                                          └─────────────────┘
 ```
 ### Ejecución básica
-Desde el directorio Frontend:
+Frontend:
 
 ```bash
-cd frontend
+frontend
 npm start
 ```
 > Corre en http://localhost:4200
 
-Desde el directorio Backend:
+Backend:
 ```bash
-cd backend
 .\gradlew.bat :backend:bootRun
 ```
 > Corre en http://localhost:8080/api
