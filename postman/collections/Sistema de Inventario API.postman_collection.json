@@ -1,0 +1,3516 @@
+{
+  "info": {
+    "_postman_id": "5489f9db-0a2d-457e-a928-0897f34d2a39",
+    "name": "Sistema de Inventario Multi-Sucursal API",
+    "description": "API REST completa para sistema de gestión de inventario multi-sucursal con ventas, compras, proveedores, clientes, kardex, reportes, pagos, devoluciones y transporte entre sucursales",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "Login",
+          "id": "60c7b78b-6050-42bc-8c8b-0f4deb70d8b2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@inventario.com\",\n  \"password\": \"Admin123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Iniciar sesión en el sistema"
+          },
+          "response": []
+        },
+        {
+          "name": "Registro de Usuario",
+          "id": "f2c32b69-f941-43dc-85ab-7517378c97e4",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Pérez\",\n  \"email\": \"juan.perez@inventario.com\",\n  \"password\": \"Password123!\",\n  \"telefono\": \"3001234567\",\n  \"rolId\": 2,\n  \"sucursalId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/registro",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "registro"
+              ]
+            },
+            "description": "Registrar nuevo usuario en el sistema"
+          },
+          "response": []
+        },
+        {
+          "name": "Refrescar Token",
+          "id": "334ffb3d-67aa-4f01-aeec-c15a3c3bd8aa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Refrescar token de autenticación"
+          },
+          "response": []
+        },
+        {
+          "name": "Cerrar Sesión",
+          "id": "4749b14b-4661-4306-8b8d-27fc35e40c42",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Cerrar sesión del usuario"
+          },
+          "response": []
+        }
+      ],
+      "id": "ad92665e-75af-4b66-a11a-912a231542f7"
+    },
+    {
+      "name": "Roles y Permisos",
+      "item": [
+        {
+          "name": "Listar Roles",
+          "id": "d0d831d1-f4c6-4fa1-b93f-a21689cc20bf",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/roles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles"
+              ]
+            },
+            "description": "Listar todos los roles: Asesor Comercial, Administrador de Sucursal, Encargado de Inventario, Gerente de Sucursales"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Rol por ID",
+          "id": "1fb9fa4d-02b8-421b-8f68-02bbe8fff9dd",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/roles/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener información de un rol específico"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Rol",
+          "id": "85cc10de-5c51-4339-8649-b456fd0b5e4a",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Asesor Comercial\",\n  \"descripcion\": \"Encargado de realizar ventas y atención al cliente\",\n  \"permisos\": [\"ventas.crear\", \"ventas.listar\", \"clientes.crear\", \"clientes.listar\", \"productos.listar\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/roles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles"
+              ]
+            },
+            "description": "Crear un nuevo rol con permisos específicos"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Rol",
+          "id": "734a1588-98e8-410f-9bbf-1adca1bef526",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Asesor Comercial Senior\",\n  \"descripcion\": \"Asesor con permisos adicionales\",\n  \"permisos\": [\"ventas.crear\", \"ventas.listar\", \"ventas.anular\", \"clientes.crear\", \"clientes.listar\", \"productos.listar\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/roles/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Actualizar permisos de un rol existente"
+          },
+          "response": []
+        }
+      ],
+      "id": "b08bd1e6-9ef0-491f-bc81-63ab06f72b45"
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "Listar Usuarios",
+          "id": "f8d96f2c-c0f2-4fe5-a444-32a59da33742",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios?page=1&limit=10&sucursalId=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Listar usuarios del sistema con filtro opcional por sucursal"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Usuario por ID",
+          "id": "3a8aa837-306b-4da1-89d1-e9c0ffc1ccb9",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener información de un usuario específico"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Usuario",
+          "id": "b961e606-875a-499f-a7ea-a42e6ba35ac5",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan Carlos\",\n  \"apellido\": \"Pérez García\",\n  \"telefono\": \"3009876543\",\n  \"rolId\": 2,\n  \"sucursalId\": 1,\n  \"activo\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Actualizar información de un usuario"
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Contraseña",
+          "id": "493e7071-e7f9-456f-afb9-7e54bcd6ae1e",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"passwordActual\": \"Password123!\",\n  \"passwordNueva\": \"NewPassword456!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios/:id/cambiar-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios",
+                ":id",
+                "cambiar-password"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Cambiar contraseña de usuario"
+          },
+          "response": []
+        },
+        {
+          "name": "Desactivar Usuario",
+          "id": "825ebcc7-5422-4b93-a20b-16e1e5b00c3c",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios/:id/desactivar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usuarios",
+                ":id",
+                "desactivar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Desactivar un usuario del sistema"
+          },
+          "response": []
+        }
+      ],
+      "id": "a0e5c840-8105-4cf6-b676-41b61e97721b"
+    },
+    {
+      "name": "Sucursales",
+      "item": [
+        {
+          "name": "Listar Sucursales",
+          "id": "0fa20885-e34e-46db-881b-b450f696ab7c",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sucursales?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "sucursales"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Listar todas las sucursales del sistema"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Sucursal por ID",
+          "id": "ec8b9d4f-0793-43ac-8c26-c8d865c86b48",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sucursales/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "sucursales",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener información de una sucursal específica"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Sucursal",
+          "id": "91b7974f-b3ab-4d60-8344-bc0d301e2435",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Sucursal Centro\",\n  \"codigo\": \"SUC-001\",\n  \"direccion\": \"Carrera 7 #12-34\",\n  \"ciudad\": \"Bogotá\",\n  \"departamento\": \"Cundinamarca\",\n  \"telefono\": \"6012345678\",\n  \"email\": \"centro@inventario.com\",\n  \"administradorId\": 2,\n  \"activa\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/sucursales",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "sucursales"
+              ]
+            },
+            "description": "Crear una nueva sucursal"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Sucursal",
+          "id": "85845d85-4d05-4e9d-b142-240378fa63d0",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Sucursal Centro Principal\",\n  \"codigo\": \"SUC-001\",\n  \"direccion\": \"Carrera 7 #12-34 Local 101\",\n  \"ciudad\": \"Bogotá\",\n  \"departamento\": \"Cundinamarca\",\n  \"telefono\": \"6012345678\",\n  \"email\": \"centro@inventario.com\",\n  \"administradorId\": 2,\n  \"activa\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/sucursales/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "sucursales",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Actualizar información de una sucursal"
+          },
+          "response": []
+        },
+        {
+          "name": "Desactivar Sucursal",
+          "id": "f7717c64-7be7-4905-a4ae-5df09fee1b24",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sucursales/:id/desactivar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "sucursales",
+                ":id",
+                "desactivar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Desactivar una sucursal"
+          },
+          "response": []
+        }
+      ],
+      "id": "5911b062-3a4d-4a48-8b28-f8a667fd7119"
+    },
+    {
+      "name": "Categorías",
+      "item": [
+        {
+          "name": "Listar Categorías",
+          "id": "be319b2e-4570-4fe0-804e-7c8aa1916bd3",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categorias?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Listar todas las categorías de productos"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Categoría por ID",
+          "id": "820a9c59-588a-4bfc-83c5-62c9ca7f1543",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categorias/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener una categoría específica"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Categoría",
+          "id": "f6119cd5-1bfb-4fc6-9326-4fcb4089f62e",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Electrónica\",\n  \"descripcion\": \"Productos electrónicos y tecnológicos\",\n  \"activa\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categorias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Crear una nueva categoría"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Categoría",
+          "id": "87026bd2-bba2-41a9-a44c-4814e86c9663",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Electrónica y Tecnología\",\n  \"descripcion\": \"Productos electrónicos, tecnológicos y accesorios\",\n  \"activa\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categorias/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Actualizar una categoría existente"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Categoría",
+          "id": "57361131-22fa-483f-96df-f506587eb862",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categorias/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Eliminar una categoría"
+          },
+          "response": []
+        }
+      ],
+      "id": "7095e84e-8c3f-4b95-9066-32681a91fd26"
+    },
+    {
+      "name": "Unidades de Medida",
+      "item": [
+        {
+          "name": "Listar Unidades de Medida",
+          "id": "0d743fdb-faad-44f6-8315-8bba322a6c83",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/unidades-medida?page=1&limit=10&search=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "unidades-medida"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Listar todas las unidades de medida. Ejemplos: Unidad (u), Kilogramo (kg), Gramo (g), Litro (L), Mililitro (ml), Caja (caja), Paquete (paq), Docena (doc), Metro (m)"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Unidad de Medida por ID",
+          "id": "40728a4f-f8a6-4b4e-984b-0abcfff99ec3",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/unidades-medida/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "unidades-medida",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener una unidad de medida específica"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Unidad de Medida",
+          "id": "569d1b75-cbf9-47bc-90ae-187fe9e0d564",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Paquete\",\n  \"description\": \"Unidad de medida de peso del sistema internacional\",\n  \"status\": \"True\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/units",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "units"
+              ]
+            },
+            "description": "Crear nueva unidad de medida. Tipos: peso, volumen, longitud, unidad, caja, paquete"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Unidad de Medida",
+          "id": "3ceae53e-a63f-4149-815d-4c4bdbee3538",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Kilogramo\",\n  \"abreviatura\": \"kg\",\n  \"tipo\": \"peso\",\n  \"descripcion\": \"Unidad de medida de peso actualizada\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/unidades-medida/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "unidades-medida",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Actualizar una unidad de medida"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Unidad de Medida",
+          "id": "5b5bab8f-6e62-459e-a430-9dbbfd69cc36",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/unidades-medida/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "unidades-medida",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Eliminar una unidad de medida"
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar Unidades por Tipo",
+          "id": "73f6ba33-379a-4cbd-9714-04b3f8cb99e9",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/unidades-medida/tipo/:tipo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "unidades-medida",
+                "tipo",
+                ":tipo"
+              ],
+              "variable": [
+                {
+                  "key": "tipo",
+                  "value": "peso",
+                  "description": "Valores: peso, volumen, longitud, unidad, caja, paquete"
+                }
+              ]
+            },
+            "description": "Filtrar unidades por tipo: peso (kg, g), volumen (L, ml), longitud (m), unidad (u, doc), caja, paquete"
+          },
+          "response": []
+        }
+      ],
+      "id": "1c0cb21a-8dea-4da5-b57b-9a772fa72fb4"
+    },
+    {
+      "name": "Proveedores",
+      "item": [
+        {
+          "name": "Listar Proveedores",
+          "id": "4a815fcf-6a23-4acb-abec-81147ccd25b0",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/proveedores?page=1&limit=10&search=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "proveedores"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Listar todos los proveedores"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Proveedor por ID",
+          "id": "d104230d-e5c8-4d88-a01b-01e238cd5ca1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/proveedores/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "proveedores",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener información de un proveedor"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Proveedor",
+          "id": "5c1e9e71-4aa0-452b-af7d-ce078ceb6870",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Distribuidora ABC S.A.S\",\n  \"nit\": \"900123456-7\",\n  \"telefono\": \"6012345678\",\n  \"celular\": \"3001234567\",\n  \"email\": \"contacto@distribuidoraabc.com\",\n  \"direccion\": \"Calle 123 #45-67\",\n  \"ciudad\": \"Bogotá\",\n  \"departamento\": \"Cundinamarca\",\n  \"nombreContacto\": \"María González\",\n  \"telefonoContacto\": \"3009876543\",\n  \"activo\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/proveedores",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "proveedores"
+              ]
+            },
+            "description": "Crear un nuevo proveedor"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Proveedor",
+          "id": "6efadfa6-797d-40ec-93f8-fff49a61472b",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Distribuidora ABC S.A.S\",\n  \"nit\": \"900123456-7\",\n  \"telefono\": \"6012345678\",\n  \"celular\": \"3001234567\",\n  \"email\": \"ventas@distribuidoraabc.com\",\n  \"direccion\": \"Calle 123 #45-67 Bodega 5\",\n  \"ciudad\": \"Bogotá\",\n  \"departamento\": \"Cundinamarca\",\n  \"nombreContacto\": \"María González\",\n  \"telefonoContacto\": \"3009876543\",\n  \"activo\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/proveedores/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "proveedores",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Actualizar información de un proveedor"
+          },
+          "response": []
+        },
+        {
+          "name": "Desactivar Proveedor",
+          "id": "ca196747-c2d5-4e81-baae-76a8c5fdcda3",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/proveedores/:id/desactivar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "proveedores",
+                ":id",
+                "desactivar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Desactivar un proveedor"
+          },
+          "response": []
+        }
+      ],
+      "id": "f34558f5-c7c3-4ec4-9127-7939cbac8532"
+    },
+    {
+      "name": "Clientes",
+      "item": [
+        {
+          "name": "Listar Clientes",
+          "id": "efd00a0a-be34-4ac2-9f93-4a154292eddf",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes?page=1&limit=10&search=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Listar todos los clientes"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Cliente por ID",
+          "id": "2373908e-66f6-4bb3-9666-da98a5ed1360",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener información de un cliente"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Cliente por Documento",
+          "id": "688bc88d-6ff1-4dd0-8b0b-274e3ded2b28",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes/documento/:documento",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes",
+                "documento",
+                ":documento"
+              ],
+              "variable": [
+                {
+                  "key": "documento",
+                  "value": "1234567890"
+                }
+              ]
+            },
+            "description": "Buscar cliente por número de documento"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Cliente",
+          "id": "7be2a60f-b0e6-45a9-b55b-11a3a9c27870",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoDocumento\": \"CC\",\n  \"numeroDocumento\": \"1234567890\",\n  \"nombre\": \"Carlos\",\n  \"apellido\": \"Rodríguez\",\n  \"email\": \"carlos.rodriguez@email.com\",\n  \"telefono\": \"3001234567\",\n  \"direccion\": \"Calle 45 #23-12\",\n  \"ciudad\": \"Medellín\",\n  \"departamento\": \"Antioquia\",\n  \"activo\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/clientes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes"
+              ]
+            },
+            "description": "Crear un nuevo cliente. Tipos de documento: CC, CE, NIT, TI, PAS"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Cliente",
+          "id": "31a373f2-639b-48a9-b353-7c0156cfbac3",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoDocumento\": \"CC\",\n  \"numeroDocumento\": \"1234567890\",\n  \"nombre\": \"Carlos Alberto\",\n  \"apellido\": \"Rodríguez Pérez\",\n  \"email\": \"carlos.rodriguez@email.com\",\n  \"telefono\": \"3009876543\",\n  \"direccion\": \"Calle 45 #23-12 Apto 301\",\n  \"ciudad\": \"Medellín\",\n  \"departamento\": \"Antioquia\",\n  \"activo\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/clientes/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Actualizar información de un cliente"
+          },
+          "response": []
+        },
+        {
+          "name": "Desactivar Cliente",
+          "id": "fae3f68f-aa7e-4bbe-8c43-6bc72fbdd393",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes/:id/desactivar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes",
+                ":id",
+                "desactivar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Desactivar un cliente"
+          },
+          "response": []
+        },
+        {
+          "name": "Historial de Compras del Cliente",
+          "id": "a3905ed6-d444-410b-bf1e-fa2183443c4e",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes/:id/historial-compras?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes",
+                ":id",
+                "historial-compras"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener historial de compras de un cliente"
+          },
+          "response": []
+        }
+      ],
+      "id": "c80b948a-29f0-40d9-8390-7da0c8bbe97a"
+    },
+    {
+      "name": "Productos",
+      "item": [
+        {
+          "name": "Listar Productos",
+          "id": "8bdcb0c3-953b-4219-ab0d-58dfa3baa2ee",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/productos?page=1&limit=10&search=&categoriaId=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "productos"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "categoriaId",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Listar todos los productos con filtros opcionales"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Producto por ID",
+          "id": "2ec86161-6dc5-4fee-8d47-c342c6b33a86",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/productos/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "productos",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener información de un producto"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar Producto por Código de Barras",
+          "id": "108ffe40-7881-4939-bfd0-3ee42ac150d7",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/productos/codigo-barras/:codigo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "productos",
+                "codigo-barras",
+                ":codigo"
+              ],
+              "variable": [
+                {
+                  "key": "codigo",
+                  "value": "7501234567890"
+                }
+              ]
+            },
+            "description": "Buscar producto por código de barras"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Producto",
+          "id": "8e7883cf-f172-4413-8ea6-9cbd9d51a379",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Laptop HP Pavilion 15\",\n  \"descripcion\": \"Laptop HP Pavilion 15.6 pulgadas, Intel Core i5 11va Gen, 8GB RAM, 512GB SSD\",\n  \"codigoBarras\": \"7501234567890\",\n  \"sku\": \"LAP-HP-PAV15-001\",\n  \"precio\": 2800000,\n  \"costo\": 2200000,\n  \"stockMinimo\": 5,\n  \"categoriaId\": 1,\n  \"unidadMedidaId\": 1,\n  \"activo\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/productos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "productos"
+              ]
+            },
+            "description": "Crear un nuevo producto"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Producto",
+          "id": "76281f75-3c9e-4fe8-9396-0f975cb6a94a",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Laptop HP Pavilion 15 Plus\",\n  \"descripcion\": \"Laptop HP Pavilion 15.6 pulgadas, Intel Core i5 12va Gen, 16GB RAM, 512GB SSD\",\n  \"codigoBarras\": \"7501234567890\",\n  \"sku\": \"LAP-HP-PAV15-001\",\n  \"precio\": 3200000,\n  \"costo\": 2500000,\n  \"stockMinimo\": 5,\n  \"categoriaId\": 1,\n  \"unidadMedidaId\": 1,\n  \"activo\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/productos/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "productos",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Actualizar información de un producto"
+          },
+          "response": []
+        },
+        {
+          "name": "Desactivar Producto",
+          "id": "b028731d-b7cb-41f6-81db-fc32b9d23cb4",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/productos/:id/desactivar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "productos",
+                ":id",
+                "desactivar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Desactivar un producto"
+          },
+          "response": []
+        },
+        {
+          "name": "Stock por Sucursal",
+          "id": "fa8b4dff-f3f0-4410-be0f-081786746480",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/productos/:id/stock-sucursales",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "productos",
+                ":id",
+                "stock-sucursales"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener stock de un producto en todas las sucursales"
+          },
+          "response": []
+        }
+      ],
+      "id": "4d58a1d0-ccee-4bc7-83f5-8438da48b627"
+    },
+    {
+      "name": "Inventario",
+      "item": [
+        {
+          "name": "Inventario por Sucursal",
+          "id": "a2319e30-23c5-4e19-82b4-d1daa4aedffc",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inventario/sucursal/:sucursalId?page=1&limit=10&search=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario",
+                "sucursal",
+                ":sucursalId"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                }
+              ],
+              "variable": [
+                {
+                  "key": "sucursalId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener inventario completo de una sucursal"
+          },
+          "response": []
+        },
+        {
+          "name": "Stock de Producto en Sucursal",
+          "id": "86649d3a-2215-4458-ba88-a5dc83dec957",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inventario/sucursal/:sucursalId/producto/:productoId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario",
+                "sucursal",
+                ":sucursalId",
+                "producto",
+                ":productoId"
+              ],
+              "variable": [
+                {
+                  "key": "sucursalId",
+                  "value": "1"
+                },
+                {
+                  "key": "productoId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener stock de un producto específico en una sucursal"
+          },
+          "response": []
+        },
+        {
+          "name": "Ajuste de Inventario",
+          "id": "193f8789-b26b-4081-855d-ae5ab61bde3c",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sucursalId\": 1,\n  \"productoId\": 1,\n  \"tipoAjuste\": \"entrada\",\n  \"cantidad\": 10,\n  \"motivo\": \"Ajuste por inventario físico\",\n  \"observaciones\": \"Diferencia encontrada en conteo físico\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/inventario/ajuste",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario",
+                "ajuste"
+              ]
+            },
+            "description": "Realizar ajuste de inventario. Tipos: entrada, salida"
+          },
+          "response": []
+        },
+        {
+          "name": "Productos con Stock Bajo",
+          "id": "5aad0171-2609-419b-b7c0-135f334769ab",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inventario/stock-bajo?sucursalId=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario",
+                "stock-bajo"
+              ],
+              "query": [
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Listar productos con stock por debajo del mínimo"
+          },
+          "response": []
+        },
+        {
+          "name": "Historial de Movimientos",
+          "id": "efba6395-5208-4365-b5ed-a57da92aa580",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inventario/movimientos?sucursalId=&productoId=&fechaInicio=&fechaFin=&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario",
+                "movimientos"
+              ],
+              "query": [
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "productoId",
+                  "value": ""
+                },
+                {
+                  "key": "fechaInicio",
+                  "value": ""
+                },
+                {
+                  "key": "fechaFin",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Historial de movimientos de inventario con filtros"
+          },
+          "response": []
+        }
+      ],
+      "id": "0f95163f-a79f-4610-ac0f-db957e374806"
+    },
+    {
+      "name": "Compras",
+      "item": [
+        {
+          "name": "Listar Compras",
+          "id": "76249e74-03b3-48af-a757-bd23571e9522",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/compras?page=1&limit=10&sucursalId=&proveedorId=&estado=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "compras"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "proveedorId",
+                  "value": ""
+                },
+                {
+                  "key": "estado",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Listar todas las compras. Estados: pendiente, recibida, cancelada"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Compra por ID",
+          "id": "f3171988-88ee-44e7-805f-3923c2be1cc6",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/compras/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "compras",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener detalles de una compra"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Compra",
+          "id": "02d3c7bc-7342-4cce-b0a4-6081891944c0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sucursalId\": 1,\n  \"proveedorId\": 1,\n  \"fechaCompra\": \"2024-01-15\",\n  \"numeroFactura\": \"FAC-2024-001\",\n  \"observaciones\": \"Compra de productos electrónicos\",\n  \"detalles\": [\n    {\n      \"productoId\": 1,\n      \"cantidad\": 10,\n      \"precioUnitario\": 2200000,\n      \"descuento\": 0\n    },\n    {\n      \"productoId\": 2,\n      \"cantidad\": 5,\n      \"precioUnitario\": 150000,\n      \"descuento\": 5\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/compras",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "compras"
+              ]
+            },
+            "description": "Crear una nueva orden de compra"
+          },
+          "response": []
+        },
+        {
+          "name": "Recibir Compra",
+          "id": "57ee7209-d12a-4a78-b030-0fa46b3e94fe",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaRecepcion\": \"2024-01-20\",\n  \"observaciones\": \"Mercancía recibida en buen estado\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/compras/:id/recibir",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "compras",
+                ":id",
+                "recibir"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Marcar compra como recibida y actualizar inventario"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar Compra",
+          "id": "e72af103-bbd2-437a-8630-1f36d9df485a",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Proveedor no puede cumplir con la entrega\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/compras/:id/cancelar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "compras",
+                ":id",
+                "cancelar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Cancelar una orden de compra"
+          },
+          "response": []
+        }
+      ],
+      "id": "1e921171-1866-4375-aaaa-f52b32ca9bdc"
+    },
+    {
+      "name": "Ventas",
+      "item": [
+        {
+          "name": "Listar Ventas",
+          "id": "0e1dd436-b4b0-42cc-8264-2b8e0c6477c1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ventas?page=1&limit=10&sucursalId=&clienteId=&estado=&fechaInicio=&fechaFin=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ventas"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "clienteId",
+                  "value": ""
+                },
+                {
+                  "key": "estado",
+                  "value": ""
+                },
+                {
+                  "key": "fechaInicio",
+                  "value": ""
+                },
+                {
+                  "key": "fechaFin",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Listar todas las ventas. Estados: completada, pendiente, anulada"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Venta por ID",
+          "id": "439e560d-c152-4a01-ba87-d0733e9a47e9",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ventas/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ventas",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener detalles de una venta"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Venta",
+          "id": "7800846c-4e10-42c3-bd4e-4d833753d077",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sucursalId\": 1,\n  \"clienteId\": 1,\n  \"fechaVenta\": \"2024-01-15T10:30:00\",\n  \"observaciones\": \"Venta con descuento por cliente frecuente\",\n  \"detalles\": [\n    {\n      \"productoId\": 1,\n      \"cantidad\": 1,\n      \"precioUnitario\": 2800000,\n      \"descuento\": 5\n    },\n    {\n      \"productoId\": 2,\n      \"cantidad\": 2,\n      \"precioUnitario\": 180000,\n      \"descuento\": 0\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ventas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ventas"
+              ]
+            },
+            "description": "Crear una nueva venta"
+          },
+          "response": []
+        },
+        {
+          "name": "Anular Venta",
+          "id": "6a26a0d9-20f2-41fd-9188-b7bfeb8c08f5",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Cliente solicitó anulación de la venta\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ventas/:id/anular",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ventas",
+                ":id",
+                "anular"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Anular una venta y revertir inventario"
+          },
+          "response": []
+        },
+        {
+          "name": "Ventas del Día",
+          "id": "7f7c9840-8a69-4aed-9c90-32ba69e92fc6",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ventas/dia?sucursalId=&fecha=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ventas",
+                "dia"
+              ],
+              "query": [
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "fecha",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Obtener ventas del día por sucursal"
+          },
+          "response": []
+        }
+      ],
+      "id": "f711c017-d266-452f-9555-6425b60a7764"
+    },
+    {
+      "name": "Pagos",
+      "item": [
+        {
+          "name": "Listar Pagos",
+          "id": "513e6a61-9191-4f52-9cc4-c150c3d0374e",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/pagos?page=1&limit=10&ventaId=&metodoPago=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pagos"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "ventaId",
+                  "value": ""
+                },
+                {
+                  "key": "metodoPago",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Listar todos los pagos"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Pago por ID",
+          "id": "84ae9a77-33d3-43a2-9c19-192e6481f05b",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/pagos/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pagos",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener detalles de un pago"
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar Pago",
+          "id": "96aa50de-eaba-46f8-b88b-2be2d8fb3de9",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ventaId\": 1,\n  \"metodoPago\": \"efectivo\",\n  \"monto\": 3160000,\n  \"referencia\": \"\",\n  \"observaciones\": \"Pago completo en efectivo\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pagos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pagos"
+              ]
+            },
+            "description": "Registrar un pago. Métodos: efectivo, tarjeta_credito, tarjeta_debito, transferencia, nequi, daviplata"
+          },
+          "response": []
+        },
+        {
+          "name": "Pagos de una Venta",
+          "id": "7f2611e5-e5c7-4e35-9393-7c8c6d5744d9",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/pagos/venta/:ventaId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pagos",
+                "venta",
+                ":ventaId"
+              ],
+              "variable": [
+                {
+                  "key": "ventaId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener todos los pagos de una venta"
+          },
+          "response": []
+        },
+        {
+          "name": "Anular Pago",
+          "id": "166a1dc8-6e08-44b7-bef1-53c59db9ee41",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Error en el registro del pago\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pagos/:id/anular",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pagos",
+                ":id",
+                "anular"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Anular un pago registrado"
+          },
+          "response": []
+        }
+      ],
+      "id": "4deb8539-e626-4875-ace3-177f9a7e2671"
+    },
+    {
+      "name": "Devoluciones",
+      "item": [
+        {
+          "name": "Listar Devoluciones",
+          "id": "f012632b-12fc-46ca-ab0f-15c7a168b5d3",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/devoluciones?page=1&limit=10&sucursalId=&tipo=&estado=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devoluciones"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "tipo",
+                  "value": ""
+                },
+                {
+                  "key": "estado",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Listar devoluciones. Tipos: venta, compra. Estados: pendiente, aprobada, rechazada"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Devolución por ID",
+          "id": "3e2b4ccf-7a52-469d-8c6d-fe67021dea3b",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/devoluciones/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devoluciones",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener detalles de una devolución"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Devolución de Venta",
+          "id": "4847bf7d-e27e-48ab-813a-f2887fc9f606",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ventaId\": 1,\n  \"tipo\": \"venta\",\n  \"motivo\": \"Producto defectuoso\",\n  \"observaciones\": \"Cliente reporta falla en el producto\",\n  \"detalles\": [\n    {\n      \"productoId\": 1,\n      \"cantidad\": 1,\n      \"motivoDetalle\": \"Pantalla con píxeles muertos\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/devoluciones",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devoluciones"
+              ]
+            },
+            "description": "Crear una devolución de venta"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Devolución de Compra",
+          "id": "79ba5a8e-e8c8-4acc-a3a3-1cda85919875",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"compraId\": 1,\n  \"tipo\": \"compra\",\n  \"motivo\": \"Mercancía en mal estado\",\n  \"observaciones\": \"Productos llegaron dañados\",\n  \"detalles\": [\n    {\n      \"productoId\": 2,\n      \"cantidad\": 3,\n      \"motivoDetalle\": \"Empaques rotos\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/devoluciones",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devoluciones"
+              ]
+            },
+            "description": "Crear una devolución de compra al proveedor"
+          },
+          "response": []
+        },
+        {
+          "name": "Aprobar Devolución",
+          "id": "25cf4fe0-1c75-4fcc-80e4-da6dfac67465",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"observaciones\": \"Devolución aprobada, se procede con reembolso\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/devoluciones/:id/aprobar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devoluciones",
+                ":id",
+                "aprobar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Aprobar una devolución y actualizar inventario"
+          },
+          "response": []
+        },
+        {
+          "name": "Rechazar Devolución",
+          "id": "964c8fd2-4ecb-48aa-9892-3acb90f52b55",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Producto no cumple con política de devolución\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/devoluciones/:id/rechazar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "devoluciones",
+                ":id",
+                "rechazar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Rechazar una solicitud de devolución"
+          },
+          "response": []
+        }
+      ],
+      "id": "8d75f809-82ad-4d4c-80d8-cbccd8864fa8"
+    },
+    {
+      "name": "Transporte entre Sucursales",
+      "item": [
+        {
+          "name": "Listar Traslados",
+          "id": "2f9c41c0-de71-47f3-8614-371e3c33b826",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/traslados?page=1&limit=10&sucursalOrigenId=&sucursalDestinoId=&estado=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "traslados"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sucursalOrigenId",
+                  "value": ""
+                },
+                {
+                  "key": "sucursalDestinoId",
+                  "value": ""
+                },
+                {
+                  "key": "estado",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Listar traslados entre sucursales. Estados: pendiente, en_transito, recibido, cancelado"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Traslado por ID",
+          "id": "69aad284-240e-4110-bc59-8b39109ab715",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/traslados/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "traslados",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener detalles de un traslado"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Traslado",
+          "id": "cfc1b635-2033-4b9d-b48b-3f048c628876",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sucursalOrigenId\": 1,\n  \"sucursalDestinoId\": 2,\n  \"fechaEnvio\": \"2024-01-15\",\n  \"observaciones\": \"Traslado de productos con alta demanda en sucursal destino\",\n  \"detalles\": [\n    {\n      \"productoId\": 1,\n      \"cantidad\": 5\n    },\n    {\n      \"productoId\": 2,\n      \"cantidad\": 10\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/traslados",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "traslados"
+              ]
+            },
+            "description": "Crear un nuevo traslado entre sucursales"
+          },
+          "response": []
+        },
+        {
+          "name": "Enviar Traslado",
+          "id": "1b1340bf-8619-446e-a00e-2dc8355f166f",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transportista\": \"Juan Pérez\",\n  \"vehiculo\": \"ABC-123\",\n  \"observaciones\": \"Mercancía despachada\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/traslados/:id/enviar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "traslados",
+                ":id",
+                "enviar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Marcar traslado como enviado y descontar del inventario origen"
+          },
+          "response": []
+        },
+        {
+          "name": "Recibir Traslado",
+          "id": "bf88c7de-84d5-4e2a-8c42-a5077528f0e7",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaRecepcion\": \"2024-01-16\",\n  \"observaciones\": \"Mercancía recibida en buen estado\",\n  \"detalles\": [\n    {\n      \"productoId\": 1,\n      \"cantidadRecibida\": 5\n    },\n    {\n      \"productoId\": 2,\n      \"cantidadRecibida\": 10\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/traslados/:id/recibir",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "traslados",
+                ":id",
+                "recibir"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Confirmar recepción de traslado y actualizar inventario destino"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar Traslado",
+          "id": "cab23499-5b06-46b6-9f60-4b761b08aa6c",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Cambio en la planificación de inventario\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/traslados/:id/cancelar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "traslados",
+                ":id",
+                "cancelar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Cancelar un traslado pendiente"
+          },
+          "response": []
+        }
+      ],
+      "id": "e78ab911-7fd2-4f3f-8959-59967c3f575c"
+    },
+    {
+      "name": "Kardex",
+      "item": [
+        {
+          "name": "Kardex de Producto",
+          "id": "65f57ab0-f9e3-4313-b30f-3e59189d69db",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kardex/producto/:productoId?sucursalId=&fechaInicio=&fechaFin=&page=1&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kardex",
+                "producto",
+                ":productoId"
+              ],
+              "query": [
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "fechaInicio",
+                  "value": ""
+                },
+                {
+                  "key": "fechaFin",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "productoId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener kardex completo de un producto con todos sus movimientos"
+          },
+          "response": []
+        },
+        {
+          "name": "Kardex por Sucursal",
+          "id": "05c854c5-9038-4a3f-bbb1-14e98a947b0c",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kardex/sucursal/:sucursalId?productoId=&fechaInicio=&fechaFin=&page=1&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kardex",
+                "sucursal",
+                ":sucursalId"
+              ],
+              "query": [
+                {
+                  "key": "productoId",
+                  "value": ""
+                },
+                {
+                  "key": "fechaInicio",
+                  "value": ""
+                },
+                {
+                  "key": "fechaFin",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "sucursalId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtener kardex de todos los productos de una sucursal"
+          },
+          "response": []
+        },
+        {
+          "name": "Exportar Kardex",
+          "id": "ffb201e5-d085-409b-9dc8-20e82c8a4964",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/kardex/exportar?productoId=&sucursalId=&fechaInicio=&fechaFin=&formato=excel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "kardex",
+                "exportar"
+              ],
+              "query": [
+                {
+                  "key": "productoId",
+                  "value": ""
+                },
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "fechaInicio",
+                  "value": ""
+                },
+                {
+                  "key": "fechaFin",
+                  "value": ""
+                },
+                {
+                  "key": "formato",
+                  "value": "excel",
+                  "description": "Valores: excel, pdf"
+                }
+              ]
+            },
+            "description": "Exportar kardex en formato Excel o PDF"
+          },
+          "response": []
+        }
+      ],
+      "id": "6bf1f3f2-c866-4437-bb2a-9c9e09ed6e6e"
+    },
+    {
+      "name": "Reportes",
+      "item": [
+        {
+          "name": "Reporte de Ventas",
+          "id": "6029841c-3e18-419c-94d4-4da55cf1e7ab",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reportes/ventas?sucursalId=&fechaInicio=&fechaFin=&agruparPor=dia",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reportes",
+                "ventas"
+              ],
+              "query": [
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "fechaInicio",
+                  "value": ""
+                },
+                {
+                  "key": "fechaFin",
+                  "value": ""
+                },
+                {
+                  "key": "agruparPor",
+                  "value": "dia",
+                  "description": "Valores: dia, semana, mes"
+                }
+              ]
+            },
+            "description": "Reporte de ventas con totales y estadísticas"
+          },
+          "response": []
+        },
+        {
+          "name": "Reporte de Compras",
+          "id": "b835ce9e-8c38-4ecd-86c6-119800cdafed",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reportes/compras?sucursalId=&proveedorId=&fechaInicio=&fechaFin=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reportes",
+                "compras"
+              ],
+              "query": [
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "proveedorId",
+                  "value": ""
+                },
+                {
+                  "key": "fechaInicio",
+                  "value": ""
+                },
+                {
+                  "key": "fechaFin",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Reporte de compras realizadas"
+          },
+          "response": []
+        },
+        {
+          "name": "Reporte de Inventario",
+          "id": "a1b12920-d396-4902-a5b9-dbbd1e0e7d3f",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reportes/inventario?sucursalId=&categoriaId=&stockBajo=false",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reportes",
+                "inventario"
+              ],
+              "query": [
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "categoriaId",
+                  "value": ""
+                },
+                {
+                  "key": "stockBajo",
+                  "value": "false"
+                }
+              ]
+            },
+            "description": "Reporte de estado actual del inventario"
+          },
+          "response": []
+        },
+        {
+          "name": "Productos Más Vendidos",
+          "id": "29688496-f808-443a-8a3e-d27f137d8bf5",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reportes/productos-mas-vendidos?sucursalId=&fechaInicio=&fechaFin=&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reportes",
+                "productos-mas-vendidos"
+              ],
+              "query": [
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "fechaInicio",
+                  "value": ""
+                },
+                {
+                  "key": "fechaFin",
+                  "value": ""
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Top de productos más vendidos"
+          },
+          "response": []
+        },
+        {
+          "name": "Reporte de Rentabilidad",
+          "id": "e98717e4-1dca-466c-9b43-0e5988b998d2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reportes/rentabilidad?sucursalId=&fechaInicio=&fechaFin=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reportes",
+                "rentabilidad"
+              ],
+              "query": [
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "fechaInicio",
+                  "value": ""
+                },
+                {
+                  "key": "fechaFin",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Reporte de rentabilidad con costos vs ventas"
+          },
+          "response": []
+        },
+        {
+          "name": "Reporte de Clientes",
+          "id": "865f1a5b-68d3-4e3b-a651-f6f3d278aaf7",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reportes/clientes?sucursalId=&fechaInicio=&fechaFin=&ordenarPor=compras",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reportes",
+                "clientes"
+              ],
+              "query": [
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                },
+                {
+                  "key": "fechaInicio",
+                  "value": ""
+                },
+                {
+                  "key": "fechaFin",
+                  "value": ""
+                },
+                {
+                  "key": "ordenarPor",
+                  "value": "compras",
+                  "description": "Valores: compras, monto"
+                }
+              ]
+            },
+            "description": "Reporte de clientes con estadísticas de compras"
+          },
+          "response": []
+        },
+        {
+          "name": "Dashboard General",
+          "id": "dab98ff1-dcf7-4207-9bfa-17b826bd1268",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reportes/dashboard?sucursalId=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reportes",
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "sucursalId",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Dashboard con métricas generales del sistema"
+          },
+          "response": []
+        }
+      ],
+      "id": "a5dc92df-4ba4-4d80-a277-9647f201d51f"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "id": "c95c2652-6aaf-45ee-b480-4f0e6fe197f4",
+      "key": "base_url",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    },
+    {
+      "id": "0ad15d23-6b10-4c37-876f-3b661445fec1",
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
